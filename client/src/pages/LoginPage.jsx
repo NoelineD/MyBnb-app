@@ -1,21 +1,25 @@
-import { useState } from "react";
-import {Link} from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, Navigate } from "react-router-dom"; 
 import axios from "axios";
+import UserContext from "../UserContext";
 
 export default function LoginPage(){
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
     const [redirect, setRedirect] = useState(false);
-    // const {setUser} = useContext(UserContext);
+    const {setUser} = useContext(UserContext);
 
     async function handleLoginSubmit(ev) {
         ev.preventDefault();
         try {
             // withCredentials true pour dire qu'il y aura les cookies
-             await axios.post('http://localhost:4000/login', {email,password});
+            const {data} = await axios.post('http://localhost:4000/login', {email,password});
+            setUser(data);
+
+            //  await axios.post('http://localhost:4000/login', {email,password});
              alert('Login successfull');
 
-                       setRedirect(true);
+             setRedirect(true);
              
     //         const response = await axios.post('/login', {email,password});
     //         setUser(data);

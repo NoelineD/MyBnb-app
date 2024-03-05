@@ -1,25 +1,27 @@
 const express = require('express');
 const cors= require('cors');
+const cookieParser = require('cookie-parser');
 const mongoose= require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const UserModel = require("./models/User.js");
 require('dotenv').config();
 const app = express();
-
+const bunyan = require('bunyan'); // pour voir les logs
 const bcryptSecret = bcrypt.genSaltSync(10);
 // // on a rajouté Sync car cela empechait detre un string mais objet faisait crasher 1:08
 const jwtSecret = 'heloddies894JF940rt';
 
 app.use(express.json());
+app.use(cookieParser());
 
-// Utilisation de CORS pour permettre toutes les origines
-// app.use(cors());
-
-// app.use(cors({
-//     credentials:true,
-//     origin:'http://localhost:5173',
-// }));
+// Configuration de Bunyan pour écrire les logs dans un fichier spécifique
+const logger = bunyan.createLogger({
+  name: 'myapp',
+  streams: [
+    { path: 'logs.log' } 
+  ]
+});
 
 const corsOptions = {
   origin: 'http://localhost:5173',
@@ -74,13 +76,13 @@ app.post('/login', async (req,res) =>{
         if (passOk) {
             // on signe avec email et id et on verifie mdp correspond bien
             //fonction callback err, soit ca s'arrete a l'erreur soit ca repond en recup le cookie
-            jwt.sign({email:userDoc.email, id:userDoc._id}, jwtSecret, {},(err,token)=>{
+            jwt.sign({email:userDoc.email, id:userDoc._id, name:userDoc.name}, jwtSecret, {},(err,token)=>{
                 if (err) throw err;
-                res.cookie('token', token).json({ token });
+                res.cookie('token', token).json({ userDoc });
                 // res.cookie('token', token).json({ 'pass ok' });
         });
             
-        } else {
+        } else { 
             res.status(422).json('pass not Ok');
         }
     } else {
@@ -88,11 +90,54 @@ app.post('/login', async (req,res) =>{
     }
 })
 
-// //password AdpB4WUtTXu4BOhG mise dans l'adresse de connection dans Connect puis dans l'api
+app.get('/profile', (req, res) => {
+  const {token} = req.cookies;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, (err, user)=> {
+      if (err) throw err;
+      res.json(user);
+    })
+  } else {
+    res.json({});
+  }
+  res.json({token});
 
-// app.get('/profile',(req,res) =>{
-//     res.json('user info');
-// })
+});
+
+// Middleware pour vérifier l'authentification de l'utilisateur
+// const verifyToken = (req, res, next) => {
+//   if (!req.cookies || !req.cookies.token) {
+//     return res.status(401).json({ message: 'Unauthorized: No token provided' });
+//   }
+
+//   const token = req.cookies.token;
+
+//   jwt.verify(token, jwtSecret, (err, decoded) => {
+//     if (err) {
+//       return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+//     }
+//     req.user = decoded; // Stocker les données utilisateur dans la requête
+//     next();
+//   });
+// };
+
+// app.get('/profile', verifyToken, (req, res) => {
+//   const userId = req.user.id;
+//   UserModel.findById(userId)
+//     .then(user => {
+//       if (!user) {
+//         return res.status(404).json({ message: 'User not found' });
+//       }
+//       res.json(user);
+//     })
+//     .catch(error => {
+// // Enregistrer l'erreur avec Bunyan
+//       logger.error({ error: error }, 'Erreur lors de la récupération du profil utilisateur : %s', error.message);
+//       console.error('Error fetching user profile:', error);
+//       res.status(500).json({ message: 'Internal Server Error' });
+//     });
+// });
+
 app.listen(4000);
 
 //question gpt : qu'est ce que les cors ici? yarn add cors. Qu'est ce que les credentials?
