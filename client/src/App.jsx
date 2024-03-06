@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import IndexPage from './pages/IndexPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import AccountPage from './pages/AccountPage';
 import Layout from './Layout';
 import axios from "axios";
 // ne jamais oublier import axios dans app.jsx sinon la page ne s'affichera pas si axios dans un autre fichier
@@ -23,6 +24,11 @@ function App() {
           <Route index element={<IndexPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/account/:subpage?" element={<AccountPage />} />
+          <Route path="/account/:subpage/:action" element={<AccountPage />} />
+
+          {/* <Route path="/account/bookings" element={<AccountPage />} />
+          <Route path="/account/places" element={<AccountPage />} /> */}
         </Route>
       </Routes>
     </UserContextProvider>

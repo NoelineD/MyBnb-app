@@ -70,6 +70,7 @@ app.post('/register', async (req,res) => {
 app.post('/login', async (req,res) =>{
     const {email,password} = req.body;
     const userDoc = await UserModel.findOne({email});
+
 // if not no then we find it
     if (userDoc) {
         const passOk = bcrypt.compareSync(password, userDoc.password)
@@ -78,7 +79,7 @@ app.post('/login', async (req,res) =>{
             //fonction callback err, soit ca s'arrete a l'erreur soit ca repond en recup le cookie
             jwt.sign({email:userDoc.email, id:userDoc._id, name:userDoc.name}, jwtSecret, {},(err,token)=>{
                 if (err) throw err;
-                res.cookie('token', token).json({ userDoc });
+                res.cookie('token', token).json( userDoc );
                 // res.cookie('token', token).json({ 'pass ok' });
         });
             
@@ -104,6 +105,9 @@ app.get('/profile', (req, res) => {
 
 });
 
+app.post('/logout', async (req,res) =>{
+  res.cookie('token', '').json(true);
+});
 // Middleware pour vérifier l'authentification de l'utilisateur
 // const verifyToken = (req, res, next) => {
 //   if (!req.cookies || !req.cookies.token) {
