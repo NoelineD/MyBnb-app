@@ -5,9 +5,11 @@ const mongoose= require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const UserModel = require("./models/User.js");
+const imageDownloader= require('image-downloader');
 require('dotenv').config();
 const app = express();
 const bunyan = require('bunyan'); // pour voir les logs
+
 const bcryptSecret = bcrypt.genSaltSync(10);
 // // on a rajouté Sync car cela empechait detre un string mais objet faisait crasher 1:08
 const jwtSecret = 'heloddies894JF940rt';
@@ -108,39 +110,16 @@ app.get('/profile', (req, res) => {
 app.post('/logout', async (req,res) =>{
   res.cookie('token', '').json(true);
 });
-// Middleware pour vérifier l'authentification de l'utilisateur
-// const verifyToken = (req, res, next) => {
-//   if (!req.cookies || !req.cookies.token) {
-//     return res.status(401).json({ message: 'Unauthorized: No token provided' });
-//   }
 
-//   const token = req.cookies.token;
-
-//   jwt.verify(token, jwtSecret, (err, decoded) => {
-//     if (err) {
-//       return res.status(401).json({ message: 'Unauthorized: Invalid token' });
-//     }
-//     req.user = decoded; // Stocker les données utilisateur dans la requête
-//     next();
-//   });
-// };
-
-// app.get('/profile', verifyToken, (req, res) => {
-//   const userId = req.user.id;
-//   UserModel.findById(userId)
-//     .then(user => {
-//       if (!user) {
-//         return res.status(404).json({ message: 'User not found' });
-//       }
-//       res.json(user);
-//     })
-//     .catch(error => {
-// // Enregistrer l'erreur avec Bunyan
-//       logger.error({ error: error }, 'Erreur lors de la récupération du profil utilisateur : %s', error.message);
-//       console.error('Error fetching user profile:', error);
-//       res.status(500).json({ message: 'Internal Server Error' });
-//     });
-// });
+app.post('/upload-by-link', async (req,res) =>{
+  const {link}= req.body;
+  const newName= 'photo' + Date.now() + '.jpg';
+  await imageDownloader.image({
+    url:link,
+    dest:__dirname + '/uploads/' +newName,
+  });
+  res.json(newName)
+});
 
 app.listen(4000);
 
