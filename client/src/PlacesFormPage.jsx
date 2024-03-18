@@ -25,7 +25,7 @@ useEffect(() => {
         const {data} = response;
         setTitle(data.title);
         setAddress(data.address);
-        setAddedPhotos(data.photos);
+        setAddedPhotos(data.addedhotos);
         setDescription(data.description);
         setPerks(data.perks);
         setExtraInfo(data.info);

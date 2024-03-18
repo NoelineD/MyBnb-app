@@ -32,9 +32,9 @@ const [places, setPlaces] = useState([]);
     <div className="grid grid-cols-1 gap-8">
      {places.length > 0 && places.map(place => (
         <Link to={`/account/places/${place._id}`} className="flex cursor-pointer bg-gray-200 p-2 rounded-2xl mb-4" key={place._id}>
-            <div className="w-32 h-32 bg-gray-300">
-                {place.photos.length && (
-                    <img className='object-cover w-full h-full' src={'http://localhost:4000/uploads/' + place.photos[0]} alt=""/>
+            <div className="flex w-32 h-32 bg-gray-300 grow shrink-0">
+                {place.addedPhotos.length > 0 && (
+                    <img className='object-cover w-full h-full' src={'http://localhost:4000/uploads/' + place.addedPhotos[0]} alt=""/>
                 )}
             </div>
             

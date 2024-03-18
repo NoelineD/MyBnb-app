@@ -48,10 +48,11 @@ async function addPhotoByLink(ev){
 
                 <div className="mt-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
                 {/* Affichage des photos */}
-                {addedPhotos.length > 0 && addedPhotos.map(link => (
-                    <div className="h-32 flex" key={link}>
-                        <img className="rounded-2xl w-full object-cover" src={'http://localhost:4000/uploads/' + link} alt="" />
-                    </div>
+                {addedPhotos && addedPhotos.length > 0 && addedPhotos.map(link => (
+            <div className="h-32 flex" key={link}>
+                <img className="rounded-2xl w-full object-cover" src={'http://localhost:4000/uploads/' + link} alt="" />
+            </div>
+
         ))}
           {/* Bouton d'upload */}
                 <label className="h-32 flex items-center gap-1 justify-center border bg-transparent rounded-2xl p-2 text-2xl text-gray-600 cursor-pointer">
