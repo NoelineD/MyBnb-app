@@ -11,6 +11,7 @@ import PlacesFormPage from './placesFormPage';
 import axios from "axios";
 // ne jamais oublier import axios dans app.jsx sinon la page ne s'affichera pas si axios dans un autre fichier
 import { UserContextProvider } from './UserContext';
+import DescriptionPage from './pages/DescriptionPage';
 
 
 
@@ -32,8 +33,7 @@ function App() {
           <Route path="/account/places" element={<PlacesPage />} />
            <Route path="/account/places/new" element={<PlacesFormPage />} />
            <Route path="/account/places/:id" element={<PlacesFormPage />} />
-          {/* <Route path="/account/bookings" element={<AccountPage />} />
-          <Route path="/account/places" element={<AccountPage />} /> */}
+          <Route path="/place/:id" element={<DescriptionPage/>} /> 
         </Route>
       </Routes>
     </UserContextProvider>

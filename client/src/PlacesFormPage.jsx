@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Perks from "./perks";
-import { PhotosUploader } from './photosUploader';
+import { PhotosUploader } from './PhotosUploader';
 import AccountNav from "./AccountNav";
 import { Navigate, useParams } from 'react-router-dom';
 
@@ -16,6 +16,7 @@ const [checkIn, setCheckIn]= useState('');
 const [checkOut, setCheckOut]= useState('');
 const [maxGuests, setMaxGuests]= useState('');
 const [perks, setPerks] = useState([]);
+const [price, setPrice] = useState(100);
 const [redirect, setRedirect] = useState(false);
 useEffect(() => {
     if(!id){
@@ -25,15 +26,20 @@ useEffect(() => {
         const {data} = response;
         setTitle(data.title);
         setAddress(data.address);
-        setAddedPhotos(data.addedhotos);
+        setAddedPhotos(data.addedPhotos);
         setDescription(data.description);
         setPerks(data.perks);
-        setExtraInfo(data.info);
+        setExtraInfo(data.extraInfo );
         setCheckIn(data.checkIn);
         setCheckOut(data.checkOut);
         setMaxGuests(data.maxGuests);
+        setPrice(data.price);
     })
 },[id])
+
+function handlePhotoChange(newPhotos) {
+    setAddedPhotos(newPhotos);
+}
 
 function preInput (header,description){
     return (
@@ -50,7 +56,7 @@ ev.preventDefault();
 const placeData ={
     title, address, addedPhotos, 
     description, perks, extraInfo, 
-    checkIn, checkOut,maxGuests
+    checkIn, checkOut,maxGuests, price,
 };
     if(id) {
        await axios.put('/places', {
@@ -94,7 +100,7 @@ function inputDescription(text){
 
                 {preInput('Photos','more pics you get the better')}
 
-                <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
+                <PhotosUploader addedPhotos={addedPhotos} onChange={handlePhotoChange} />
                 
                 {preInput('Description','Describe your lovely place. Try to be as catchy as you can !')}
                 <textarea value={description} onChange={ev =>setDescription(ev.target.value)}/>
@@ -114,7 +120,7 @@ function inputDescription(text){
                 {preInput('Check in & out times','add times, remember to have some time window for cleaning the room before leaving')}
                 
 
-            <div className="grid gap-2 sm:grid-cols-3">
+            <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
                 <div>
                     <h3 className="mt-2 -mb-1">Check in Time</h3>
                     <input type="text" value={checkIn} onChange={ev =>setCheckIn(ev.target.value)} placeholder="14"/>
@@ -126,6 +132,11 @@ function inputDescription(text){
                 <div>
                     <h3>Max Number of guests</h3>
                     <input type="number" value={maxGuests} onChange={ev =>setMaxGuests(ev.target.value)}/>
+                </div>
+
+                <div>
+                    <h3>Price per night</h3>
+                    <input type="number" value={price} onChange={ev =>setPrice(ev.target.value)}/>
                 </div>
             </div>
           

@@ -8,7 +8,7 @@ export default function PlacesPage(){
 const [places, setPlaces] = useState([]);
 
     useEffect(() => {
-    axios.get('/places').then(response => {
+    axios.get('/user-places').then(response => {
         console.log('Response:', response);
         setPlaces(response.data);
     }).catch(error => {

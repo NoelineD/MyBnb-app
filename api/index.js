@@ -168,7 +168,7 @@ app.post('/places', (req,res) =>{
   const {token} = req.cookies;
   const {title, address, addedPhotos, 
          description, perks, extraInfo, 
-         checkIn, checkOut, maxGuests,
+         checkIn, checkOut, maxGuests,price,
   }= req.body
   jwt.verify(token, jwtSecret, {}, async (err, user)=> {
     if (err) throw err;
@@ -177,14 +177,14 @@ app.post('/places', (req,res) =>{
       owner: user.id,
       title, address, photos: addedPhotos, 
       description, perks, extraInfo, 
-      checkIn, checkOut, maxGuests,
+      checkIn, checkOut, maxGuests, price,
     });
       res.json(placeDoc);
   });
 });
 
-//affichage location
-app.get('/places', (req,res) =>{
+//affichage location pour un user
+app.get('/user-places', (req,res) =>{
    const {token} = req.cookies;
 jwt.verify(token, jwtSecret, {}, async (err, user)=> {
   const {id} = user;
@@ -202,7 +202,7 @@ app.put('/places', async (req, res) => {
 const {token} = req.cookies;
 const {id,title, address, addedPhotos, 
       description, perks, extraInfo, 
-      checkIn, checkOut, maxGuests,
+      checkIn, checkOut, maxGuests,price,
   }= req.body;
 //first on recupere les infos qu'on veut fetch puis on fetch
 jwt.verify(token, jwtSecret, {}, async (err, user)=> {
@@ -214,12 +214,19 @@ jwt.verify(token, jwtSecret, {}, async (err, user)=> {
     placeDoc.set({
       owner: user.id,
       title, address, addedPhotos, description, perks,
-      extraInfo, checkIn, checkOut, maxGuests,
+      extraInfo, checkIn, checkOut, maxGuests, price,
     })
     await placeDoc.save();
     res.json('ok');
   }
 });
+});
+
+//affichage locations accueil
+app.get('/places', async (req,res) =>{
+
+ res.json( await Place.find());
+
 });
 
 app.listen(4000);
